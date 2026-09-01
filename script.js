@@ -42,6 +42,38 @@ document.getElementById("year").textContent = new Date().getFullYear();
     });
 })();
 
+// ---------- Share button ----------
+(function () {
+  const btn = document.getElementById("shareBtn");
+  if (!btn) return;
+  const label = document.getElementById("shareBtnLabel");
+  const originalLabel = label.textContent;
+  const shareData = {
+    title: document.title,
+    text: "One trail, connecting Salt Lake City and Park City. Sign on to show your support.",
+    url: "https://www.slctopc.org/"
+  };
+
+  btn.addEventListener("click", async function () {
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        // User canceled the share sheet -- not an error, do nothing.
+      }
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareData.url);
+      label.textContent = "Link Copied!";
+      setTimeout(() => { label.textContent = originalLabel; }, 2000);
+    } catch (err) {
+      // Clipboard API unavailable -- leave the button as a no-op rather than error.
+    }
+  });
+})();
+
 // ---------- Signup form -> Google Form ----------
 //
 // Submits straight to the real "SLC to PC List" Google Form in the
